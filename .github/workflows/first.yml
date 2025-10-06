@@ -1,0 +1,24 @@
+name: First Workflow
+
+on: push
+
+jobs: 
+ build:
+  runs-on: ubuntu-latest
+  steps:
+  - name: Code checkout
+    run: echo "Code checkout"
+ 
+
+
+ test:
+  runs-on: windows-latest
+  steps:
+  - name: Code checkout
+    run: echo "test"
+
+ deploy:
+  runs-on: ubuntu-latest
+  steps:
+  - name: Code checkout
+    run: echo "deploy"
