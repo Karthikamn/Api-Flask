@@ -6,7 +6,7 @@ on:
 env:
  DOCKER_USERNAME: ${{vars.DOCKER_NAME}}
  DOCKER_PASSWORD: ${{secrets.NEW_DOCKER_PASSWORD}}
- DOCKER_IMAGE: karthikamn/my-python-api-flask
+ DOCKER_IMAGE: karthikamn/python-flask-api-gen-ai
 jobs:
  build-using-docker:
   runs-on: ubuntu-latest
@@ -17,21 +17,9 @@ jobs:
    - name: Docker Build
      run: |
       docker build -t $DOCKER_IMAGE:${{github.sha}} .
-      docker tag $DOCKER_IMAGE:${{github.sha}} $DOCKER_IMAGE:latest
+      docker tag $DOCKER_IMAGE:${{github.sha}} $DOCKER_IMAGE:v1.2
 
    - name: run-docker
      run: |
-      docker run -d --name flask-python -p 5000:5000 $DOCKER_IMAGE:latest
-   - name: Setup Kubectl
-     uses: azure/setup-kubectl@v4
-     with:
-       version: latest
-   - name: Setup Minikube
-     run: |
-      minikube start
-      kubectl config use-context minikube
-   - name: Deployment k8s
-     run: |
-      kubectl apply -f k8s/deployment.yml
-      kubectl apply -f k8s/service.yml
-      
+      docker run -d --name flask-python -p 5000:5000 $DOCKER_IMAGE:v1.2
+  
