@@ -8,7 +8,7 @@ jobs:
  ci-cd:
   runs-on: ubuntu-latest
   env:
-   DOCKER_IMAGE: karthikamn/flask-api-python-app
+   DOCKER_IMAGE: karthikamn/flask-api-python-app-lbg
    
   steps:
     - name: Checkout Code
@@ -23,30 +23,14 @@ jobs:
     - name: Build docker image
       run: |
        docker build -t $DOCKER_IMAGE:${{github.sha}} .
-       docker tag $DOCKER_IMAGE:${{github.sha}} $DOCKER_IMAGE:latest
+       docker tag $DOCKER_IMAGE:${{github.sha}} $DOCKER_IMAGE:v1.1
        
     - name: Push docker image
       run: |
        docker push $DOCKER_IMAGE:${{github.sha}}
-       docker push $DOCKER_IMAGE:latest
+       docker push $DOCKER_IMAGE:v1.1
 
-       
-    - name: Setup Kubectl for kubernetes
-      uses: azure/setup-kubectl@v3
-      with:
-       version: 'latest'
-    - name: Setup Minikube
-      run: |
-       minikube start
-       kubectl config use-context minikube
-       
-    - name: Deploy to Kubernetes
-      run: |
-       kubectl apply  -f k8s/deployment.yml
-       kubectl apply -f k8s/service.yml
-      
-      
-      
+   
       
        
        
