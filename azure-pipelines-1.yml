@@ -1,0 +1,33 @@
+trigger:
+  branches:
+    include:
+      - main
+
+variables:
+  imageName: 'flask-python-app-azure'
+  tag: 'v1'
+  acrName: 'KarthikaRepo'  # e.g., myacr
+  acrLoginServer: 'karthikarepo.azurecr.io'
+
+pool:
+  name: Hackathon2
+
+steps:
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'Microsoft Azure'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      echo "Logging into ACR..."
+      az acr login --name ${{ variables.acrName }}
+
+      echo "Building Docker image..."
+      docker build -t ${{ variables.imageName }} .
+
+      echo "Tagging image..."
+      docker tag ${{ variables.imageName }} ${{ variables.acrLoginServer }}/${{ variables.imageName }}:${{ variables.tag }}
+
+      echo "Pushing image to ACR..."
+      docker push ${{ variables.acrLoginServer }}/${{ variables.imageName }}:${{ variables.tag }}
+  displayName: 'Build and Push Docker Image to ACR'
