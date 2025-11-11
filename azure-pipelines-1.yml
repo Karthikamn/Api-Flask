@@ -20,6 +20,7 @@ stages:
         dockerfile: Dockerfile
         containerRegistry: dockercontainerregistry
         
+        
 
     - task: PublishPipelineArtifact@1
       displayName: Publish manifests
