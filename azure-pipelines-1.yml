@@ -3,31 +3,27 @@ trigger:
     include:
       - main
 
-variables:
-  imageName: 'flask-python-app-azure'
-  tag: 'v1'
-  acrName: 'KarthikaRepo'  # e.g., myacr
-  acrLoginServer: 'karthikarepo.azurecr.io'
+stages:
+- stage: Build
+  displayName: Build stage
+  jobs:
+  - job: Build
+    displayName: Build job
+    pool:
+      vmImage: Hackathon2
+    steps:
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        repository: flask-python-app-azure
+        dockerfile: Dockerfile
+        containerRegistry: dockercontainerregistry
+        
 
-pool:
-  name: Hackathon2
+    - task: PublishPipelineArtifact@1
+      displayName: Publish manifests
+      inputs:
+        artifactName: 'manifests'
+        path: stray `- task:` line at the top which seemed out of place.
 
-steps:
-- task: AzureCLI@2
-  inputs:
-    azureSubscription: 'Microsoft Azure'
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-      echo "Logging into ACR..."
-      az acr login --name ${{ variables.acrName }}
-
-      echo "Building Docker image..."
-      docker build -t ${{ variables.imageName }} .
-
-      echo "Tagging image..."
-      docker tag ${{ variables.imageName }} ${{ variables.acrLoginServer }}/${{ variables.imageName }}:${{ variables.tag }}
-
-      echo "Pushing image to ACR..."
-      docker push ${{ variables.acrLoginServer }}/${{ variables.imageName }}:${{ variables.tag }}
-  displayName: 'Build and Push Docker Image to ACR'
