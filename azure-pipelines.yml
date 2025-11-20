@@ -6,14 +6,28 @@
 trigger:
 - main
 
-pool:
-  name: MyAgentPool
 
-steps:
-- task: SonarQubePrepare@7
-  inputs:
-     SonarQube: 'Sonar1'
-     scannerMode: 'other'
-     extraProperties: 
-      sonar.projectName=MavenProjectADO1
-      sonar.projectKey=MavenProjectADO1
+stages:
+  
+- stage: Build
+  displayName: Build stage
+  jobs:  
+  - job: Build
+    displayName: Build job
+    pool:
+      name: Selfhosted1
+    steps:
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        repository: KarthikaRepo
+        dockerfile: $(dockerfilePath)
+        containerRegistry: acr1
+        
+          
+    - task: PublishPipelineArtifact@1
+      inputs:
+        artifactName: 'manifests'
+        path: 'manifests'
+
