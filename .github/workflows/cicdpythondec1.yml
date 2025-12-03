@@ -37,7 +37,7 @@ jobs:
         
      - name: Deploy to Single cluster k8s
        run: |
-        kubetcl apply -f k8s/deployment.yml
-        kubetcl apply -f k8s/service.yml
+        kubectl apply -f k8s/deployment.yml
+        kubectl apply -f k8s/service.yml
  
        
