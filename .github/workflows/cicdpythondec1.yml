@@ -26,8 +26,18 @@ jobs:
           tags: |
            ${{secrets.DOCKER_UN}}/myapp:latest
            ${{secrets.DOCKER_UN}}/myapp:${{ github.sha}}
-           
-           
-          
+     - name: Setup Kubectl for kubernetes
+       uses: azure/setup-kubectl@v3
+       with:
+         version: 'latest'      
+     - name: Setup Minikube
+       run: |
+        minikube start
+        kubectl config use-context minikube 
+        
+     - name: Deploy to Single cluster k8s
+       run: |
+        kubetcl apply -f k8s/deployment.yml
+        kubetcl apply -f k8s/service.yml
  
        
