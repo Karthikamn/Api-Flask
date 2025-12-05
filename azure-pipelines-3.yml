@@ -7,7 +7,7 @@ trigger:
 - main
 
 variables:
-  dockerRegistryServiceConnection: 'dockerregkarthika'
+  dockerRegistryServiceConnection: 'acrregkarthika1'
   imageRepository: 'karthikarepo'
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
   tag: '$(Build.BuildId)'
