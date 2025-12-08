@@ -48,7 +48,7 @@ stages:
     displayName: Deploy job
     pool:
       name: AgentPool1
-    environment: k8s.ns01  #customize with your environment
+    environment: k8s  #customize with your environment
     strategy:
       runOnce:
         deploy:
