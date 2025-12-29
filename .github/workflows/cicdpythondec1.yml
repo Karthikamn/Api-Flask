@@ -2,7 +2,7 @@ name: CI CD - API-Flask Python Appln
 
 
 on:
- workflow_dispatch
+ push
 
 jobs:
  ci-cd:
