@@ -5,9 +5,8 @@ on:
  push
 
 jobs:
- ci-cd:
+ build:
    runs-on: ubuntu-latest
-   environment: prod
    steps:
      - name: Checkout
        uses: actions/checkout@v6.0.1
@@ -27,18 +26,27 @@ jobs:
           tags: |
            ${{secrets.DOCKER_UN}}/myapp:latest
            ${{secrets.DOCKER_UN}}/myapp:${{ github.sha}}
-     - name: Setup Kubectl for kubernetes
-       uses: azure/setup-kubectl@v3
-       with:
-         version: 'latest'      
-     - name: Setup Minikube
-       run: |
-        minikube start
-        kubectl config use-context minikube 
-        
-     - name: Deploy to Single cluster k8s
-       run: |
-        kubectl apply -f k8s/deployment.yml
-        kubectl apply -f k8s/service.yml
- 
+ dev:
+  needs: build
+  environment: dev
+  runs-on: ubuntu-latest
+  steps:
+   - name: Deploy to dev 
+     run: echo "deploy to dev"
+ test:
+  needs: dev
+  environment: test
+  runs-on: ubuntu-latest
+  steps:
+   - name: Deploy to test 
+     run: echo "deploy to test"
+ staging:
+  needs: test
+  runs-on: ubuntu-latest
+  environment: staging
+  steps:
+   - name: Deploy to staging 
+     run: echo "deploy to staging"
+     
+     
        
