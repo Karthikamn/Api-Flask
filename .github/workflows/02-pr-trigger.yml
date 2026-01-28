@@ -1,0 +1,17 @@
+name: 02-PR-Trigger
+
+on:
+  pull_request:
+    branches: [ "main" ] # Only runs when someone wants to merge into main
+
+jobs:
+  check-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Run Quality Check
+        run: |
+          echo "Robot is inspecting the code..."
+          echo "All checks passed! This PR is safe."
