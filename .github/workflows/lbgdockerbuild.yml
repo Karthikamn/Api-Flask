@@ -13,7 +13,7 @@ jobs:
       uses: docker/login-action@v3.7.0
       with:
        username: ${{vars.DOCKER_UN}}
-       password: ${[secrets.DOCKER_PSWD_NEW}}
+       password: ${{secrets.DOCKER_PSWD_NEW}}
     - name: Docker Build
       run: |
        docker build -t my-python-app:1.0 .
