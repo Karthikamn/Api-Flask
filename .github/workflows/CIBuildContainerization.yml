@@ -7,6 +7,7 @@ on:
 jobs:
  ci_build_containerization:
   runs-on: ubuntu-latest
+  environment:  dev1
   steps:
    - name: Checkout
      uses: actions/checkout@v6.0.2
