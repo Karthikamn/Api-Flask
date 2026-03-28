@@ -1,0 +1,75 @@
+name: CI-CD-Pipeline
+
+# Trigger the workflow on pushes to main or any Pull Request
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # STAGE 1: BUILD (Compiling the code)
+  build-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Compile Project
+        run: npm run build --if-present
+
+      # Save the result so 'test' and 'deploy' jobs can use it
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: compiled-app
+          path: dist/ # Ensure this matches your project's output folder
+
+  # STAGE 2: TEST (Verifying the code)
+  test-job:
+    needs: build-job # Only runs if build succeeds
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Unit Tests
+        run: npm test
+
+  # STAGE 3: DEPLOY (Shipping the code)
+  deploy-job:
+    needs: test-job # Only runs if tests pass
+    runs-on: ubuntu-latest
+    # Safety: Only deploy on pushes to main, not on Pull Requests
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Download Compiled Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: compiled-app
+          path: ./release
+
+      - name: Deploying to Production
+        run: |
+          echo "Connecting to production server..."
+          echo "Deploying files from ./release..."
+          # Real-world command would be something like:
+          # scp -r ./release/* user@server:/var/www/html

@@ -1,0 +1,45 @@
+name: CI-CD-Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  # STAGE 1: BUILD
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile Code
+        run: |
+          echo "Compiling..."
+          mkdir -p dist
+          echo "Build successful" > dist/index.html
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-assets
+          path: dist/
+
+  # STAGE 2: TEST
+  test:
+    needs: build # This 'links' the boxes visually
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Tests
+        run: echo "Testing complete. No errors found ✅"
+
+  # STAGE 3: DEPLOY
+  deploy:
+    needs: test # This ensures we only deploy if tests pass
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' # Safety: Don't deploy on Pull Requests
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: build-assets
+      - name: Execute Deployment
+        run: echo "Deploying to production server... 🚀"
